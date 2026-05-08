@@ -160,18 +160,20 @@ app.set('trust proxy', 1);
 app.use(cors());
 app.use(express.json());
 
-// Session (required for OIDC state/nonce)
-app.use(session({
-  secret:            SESSION_SECRET,
-  resave:            false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    secure:   process.env.NODE_ENV === 'production',
-    maxAge:   8 * 60 * 60 * 1000,   // 8 hours
-    sameSite: 'lax',
-  },
-}));
+// Session — only mounted when OIDC is active (avoids MemoryStore warning otherwise)
+if (AUTH_MODE === 'oidc') {
+  app.use(session({
+    secret:            SESSION_SECRET,
+    resave:            false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure:   process.env.NODE_ENV === 'production',
+      maxAge:   8 * 60 * 60 * 1000,
+      sameSite: 'lax',
+    },
+  }));
+}
 
 // ── Auth middleware ───────────────────────────────────────────────────────────
 function requireAuth(req, res, next) {
