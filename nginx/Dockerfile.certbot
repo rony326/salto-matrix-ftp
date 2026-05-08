@@ -1,0 +1,22 @@
+FROM certbot/certbot:latest
+
+# Install DNS plugin based on CERTBOT_DNS_PLUGIN build arg or at runtime.
+# Default: dns-cloudflare. Override with --build-arg DNS_PLUGIN=dns-route53 etc.
+ARG DNS_PLUGIN=dns-cloudflare
+
+# Install all common plugins so the image works for any provider without rebuild.
+# Each plugin is small (~50-200 kB), total overhead minimal.
+RUN pip install --no-cache-dir \
+    certbot-dns-cloudflare \
+    certbot-dns-route53 \
+    certbot-dns-digitalocean \
+    certbot-dns-dnsimple \
+    certbot-dns-ovh \
+    && pip install --no-cache-dir \
+    certbot-dns-hetzner \
+    certbot-dns-inwx \
+    || true
+# Note: hetzner and inwx are community plugins — install failure is non-fatal.
+# If needed, pin versions: certbot-dns-hetzner==2.0.0
+
+ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]

@@ -1,0 +1,84 @@
+version: '3.8'
+
+# Alle Konfiguration in .env — cp .env.example .env
+
+services:
+
+  salto-matrix:
+    build: .
+    container_name: salto-matrix
+    restart: unless-stopped
+    expose:
+      - "3000"
+    volumes:
+      - salto-data:/data
+      - ./config/zones.json:/config/zones.json:ro
+    env_file: .env
+    environment:
+      PORT: 3000
+      DATA_DIR: /data
+      ZONES_FILE: /config/zones.json
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  nginx:
+    image: nginx:alpine
+    container_name: salto-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx-entrypoint.sh:/docker-entrypoint.sh:ro
+      - acme-certs:/etc/nginx/certs:ro
+    env_file: .env
+    entrypoint: ["/bin/sh", "/docker-entrypoint.sh"]
+    depends_on:
+      salto-matrix:
+        condition: service_healthy
+    networks:
+      - internal
+      - external
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  acme:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.acme
+    container_name: salto-acme
+    profiles: ["tls"]
+    restart: unless-stopped
+    volumes:
+      - acme-certs:/etc/acme
+      - acme-data:/root/.acme.sh
+      - ./nginx/acme-entrypoint.sh:/entrypoint.sh:ro
+    env_file: .env
+    networks:
+      - external
+    logging:
+      driver: json-file
+      options: { max-size: "5m", max-file: "2" }
+
+volumes:
+  salto-data:
+  acme-certs:
+  acme-data:
+
+networks:
+  internal:
+    internal: true
+  external:
+    name: salto-external

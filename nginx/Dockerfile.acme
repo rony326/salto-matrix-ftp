@@ -1,0 +1,7 @@
+FROM neilpang/acme.sh:latest
+
+# acme.sh supports 150+ DNS providers out of the box — no plugins needed.
+# Provider credentials are passed as environment variables.
+# Full provider list: https://github.com/acmesh-official/acme.sh/wiki/dnsapi
+
+ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]

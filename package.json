@@ -1,0 +1,20 @@
+{
+  "name": "salto-access-matrix",
+  "version": "2.0.0",
+  "description": "Zutrittmatrix für Salto Pro Access Space — FTP/SFTP Auto-Import",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "basic-ftp": "^5.0.5",
+    "ssh2-sftp-client": "^10.0.3",
+    "express": "^4.18.3",
+    "express-session": "^1.18.0",
+    "cors": "^2.8.5",
+    "openid-client": "^5.7.0"
+  },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}

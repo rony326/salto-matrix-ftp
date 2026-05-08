@@ -1,0 +1,27 @@
+{
+  "_comment": "Manuelle Zuordnung: Tür-Name → Bereich-Name. Türnamen exakt wie in tueren.csv.",
+  "_hint": "Türen ohne Eintrag erscheinen unter 'Ohne Bereich'.",
+
+  "doorZones": {
+    "Office":                    "Office",
+    "EG Raum A1":                "Office",
+    "EG Raum A2":                "Office",
+    "Eingang Bürotrakt":         "Office",
+    "Verbindung EG - Büro":      "Office",
+    "OG Raum B1":                "Office",
+    "OG Raum B2":                "Office",
+    "OG Raum B3":                "Office",
+    "Verbindung OG - Korridor":  "Office",
+    "Media":                     "Office",
+
+    "Serverraum":                "Technikräume",
+    "Übersetzer Raum":           "Technikräume",
+
+    "Eingang Foyer":             "Halle",
+    "Backstage":                 "Halle",
+    "Verbindung OG - Bühne":     "Halle",
+    "Lager Service":             "Halle",
+    "Lager Doppelflügel":        "Halle",
+    "Küche":                     "Halle"
+  }
+}
